@@ -36,8 +36,11 @@ class MotionPlanner:
             self.ps.finishSolveStepByStep()
             return self.ps.numberPaths() - 1
 
-    def solvePRM(self):
+    def solvePRM(self,maxIter):
+        finished = False
         self.ps.prepareSolveStepByStep()
         # PRM begin
         # PRM end
-        self.ps.finishSolveStepByStep()
+        if finished:
+            self.ps.finishSolveStepByStep()
+        print("bonjour")

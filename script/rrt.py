@@ -25,7 +25,7 @@ ps.addGoalConfig(q3)
 
 
 m = MotionPlanner(robot, ps)
-pathId = m.solveBiRRT(maxIter=1000)
+pathId = m.solvePRM(maxIter=1000)
 
 # v = vf.createViewer ()
 # v (q2)
