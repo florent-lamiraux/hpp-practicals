@@ -40,6 +40,32 @@ class MotionPlanner:
         finished = False
         self.ps.prepareSolveStepByStep()
         # PRM begin
+        while not finished :
+            q_rand = self.robot.shootRandomConfig()
+            res,msg = self.robot.isConfigValid(q_rand)
+            if res :
+                self.ps.addConfigToRoadmap(q_rand)
+            else :
+                continue
+            configs_to_connect = list()
+            n_cc = self.ps.numberConnectedComponents()
+            for i in range (n_cc-1) :
+                q,d = self.ps.getNearestConfig(q_rand,i)
+                configs_to_connect.append(q)
+            for q in configs_to_connect :
+                res,p,msg = self.ps.directPath(q_rand,q,True)
+                if res :
+                    self.ps.addEdgeToRoadmap(q_rand,q,p,True)
+            # Test whether initial and goal configs are in the same
+            # connected component
+            q_init = self.ps.getInitialConfig()
+            q_goal = self.ps.getGoalConfigs()[0]
+            for i in range(self.ps.numberConnectedComponents()):
+                nodes = self.ps.nodesConnectedComponent(i)
+                if q_init in nodes and q_goal in nodes:
+                    finished = True
+                    break
+
         # PRM end
         if finished:
             self.ps.finishSolveStepByStep()
