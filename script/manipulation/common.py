@@ -3,15 +3,26 @@ from hpp.gepetto import PathPlayer  # noqa: F401
 from hpp.gepetto.manipulation import ViewerFactory
 
 from hpp.corbaserver import loadServerPlugin
-from hpp.corbaserver.practicals.manipulation.ur5 import Robot
+from hpp.corbaserver.manipulation.robot import Robot as Parent
 
 loadServerPlugin("corbaserver", "manipulation-corba.so")
 Client().problem.resetProblem()
 
-Robot.urdfName = "ur5_gripper"
-Robot.urdfSuffix = ""
-Robot.srdfSuffix = ""
+class Robot(Parent):
+    packageName = "hpp_practicals"
+    urdfName = "ur5_gripper"
+    urdfSuffix = ""
+    srdfSuffix = ""
 
+    def __init__(self, compositeName, robotName, load=True, rootJointType="anchor"):
+        Parent.__init__(self, compositeName, robotName, rootJointType, load)
+        self.rightWrist = "wrist_3_joint"
+        self.leftWrist = "wrist_3_joint"
+        self.endEffector = "ee_fixed_joint"
+
+    def getInitialConfig(self):
+        q = 6 * [0]
+        return q
 
 class Pokeball:
     rootJointType = "freeflyer"
